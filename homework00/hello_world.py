@@ -1,2 +1,10 @@
-def text():
-    return message
+"""
+Тест
+"""
+def text(o):
+    """Возвращает 'message' или 'error'"""
+    if o>float('-inf'):
+        return 'message'
+    return 'error'
+A=5
+print(text(A))
