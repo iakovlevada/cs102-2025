@@ -5,7 +5,7 @@
 
 def text(o):
     """Возвращает 'message' или 'error'"""
-    if o > float("s-inf"):
+    if o > float("-inf"):
         return "message"
     return "error"
 
