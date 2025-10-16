@@ -3,12 +3,6 @@
 """
 
 
-def text(o):
+def text():
     """Возвращает 'message' или 'error'"""
-    if o > float("-inf"):
-        return "message"
-    return "error"
-
-
-A = 5
-print(text(A))
+    return "message"
