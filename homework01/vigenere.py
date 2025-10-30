@@ -61,8 +61,3 @@ def decrypt_vigenere(ciphertext: str, keyword: str) -> str:
         if j == len(keyword):
             j = 0
     return plaintext
-
-
-STR, key = input().split()
-print(encrypt_vigenere(STR, key))
-print(decrypt_vigenere(STR, key))
