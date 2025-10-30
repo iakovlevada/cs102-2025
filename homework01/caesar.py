@@ -51,8 +51,3 @@ def decrypt_caesar(ciphertext: str, shift: int = 3) -> str:
         else:
             plaintext += chr(ord(char) - shift)
     return plaintext
-
-
-STR = str(input())
-print(encrypt_caesar(STR))
-print(decrypt_caesar(STR))
