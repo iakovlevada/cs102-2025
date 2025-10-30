@@ -34,24 +34,16 @@ def gcd(a: int, b: int) -> int:
     """
     if a == 0 and b == 0:
         return 0
-    elif a != 0 and b == 0:
+    if a != 0 and b == 0:
         return a
-    elif a == 0 and b != 0:
+    if a == 0 and b != 0:
         return b
-    ad = []
-    bd = []
-    for i in range(1, a + 1):
-        if a % i == 0:
-            ad.append(int(a / i))
-    for j in range(1, b + 1):
-        if b % j == 0:
-            bd.append(int(b / j))
-    cd = []
-    for k in range(len(ad)):
-        for l in range(len(bd)):
-            if ad[k] == bd[l]:
-                cd.append(ad[k])
-    return max(cd)
+    while a != 0 and b != 0:
+        if a > b:
+            a = a % b
+        else:
+            b = b % a
+    return a + b
 
 
 def multiplicative_inverse(e: int, phi: int) -> int:
@@ -61,14 +53,27 @@ def multiplicative_inverse(e: int, phi: int) -> int:
     >>> multiplicative_inverse(7, 40)
     23
     """
-    # PUT YOUR CODE HERE
-    pass
+
+    def euclid(a, b):
+        """
+        Euclid's extended algorithm for finding the multiplicative
+        inverse of two numbers.
+        """
+        if a == 0:
+            return b, 0, 1
+        nod, x1, y1 = euclid(b % a, a)
+        x = y1 - (b // a) * x1
+        y = x1
+        return nod, x, y
+
+    nod1, d, f = euclid(e, phi)
+    return d % phi
 
 
 def generate_keypair(p: int, q: int) -> tp.Tuple[tp.Tuple[int, int], tp.Tuple[int, int]]:
     if not (is_prime(p) and is_prime(q)):
         raise ValueError("Both numbers must be prime.")
-    elif p == q:
+    if p == q:
         raise ValueError("p and q cannot be equal")
 
     n = p * q
