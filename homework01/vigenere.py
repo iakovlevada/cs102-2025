@@ -14,22 +14,18 @@ def encrypt_vigenere(plaintext: str, keyword: str) -> str:
     'LXFOPVEFRNHR'
     """
     ciphertext = ""
-    alphabet = [chr(A) for A in range(ord("A"), ord("Z") + 1)]
-    j = 0
-    for char in plaintext:
-        for k, letter in enumerate(alphabet):
-            if keyword[j] == letter or keyword[j] == letter.lower():
-                if ord(char) in range(ord("Z") - k + 1, ord("Z") + 1):
-                    ciphertext += chr(ord(char) - (ord("Z") - ord("A") + 1) + k)
-                elif ord(char) in range(ord("z") - k + 1, ord("z") + 1):
-                    ciphertext += chr(ord(char) - (ord("z") - ord("a") + 1) + k)
-                elif not char.isalpha():
-                    ciphertext += char
-                else:
-                    ciphertext += chr(ord(char) + k)
-        j += 1
-        if j == len(keyword):
-            j = 0
+    abc = ord("Z") - ord("A") + 1
+    keyword = keyword.upper()
+    length = len(keyword)
+    for i, char in enumerate(plaintext):
+        j = i % length
+        shift = ord(keyword[j]) - ord("A")
+        if not char.isalpha():
+            ciphertext += char
+        elif ord("A") <= ord(char) <= ord("Z"):
+            ciphertext += chr((ord(char) - ord("A") + shift) % abc + ord("A"))
+        elif ord("a") <= ord(char) <= ord("z"):
+            ciphertext += chr((ord(char) - ord("a") + shift) % abc + ord("a"))
     return ciphertext
 
 
@@ -44,20 +40,16 @@ def decrypt_vigenere(ciphertext: str, keyword: str) -> str:
     'ATTACKATDAWN'
     """
     plaintext = ""
-    alphabet = [chr(A) for A in range(ord("A"), ord("Z") + 1)]
-    j = 0
-    for char in ciphertext:
-        for k, letter in enumerate(alphabet):
-            if keyword[j] == letter or keyword[j] == letter.lower():
-                if ord(char) in range(ord("A"), ord("A") + k):
-                    plaintext += chr(ord(char) + (ord("Z") - ord("A") + 1) - k)
-                elif ord(char) in range(ord("a"), ord("a") + k):
-                    plaintext += chr(ord(char) + (ord("z") - ord("a") + 1) - k)
-                elif not char.isalpha():
-                    plaintext += char
-                else:
-                    plaintext += chr(ord(char) - k)
-        j += 1
-        if j == len(keyword):
-            j = 0
+    abc = ord("Z") - ord("A") + 1
+    keyword = keyword.upper()
+    length = len(keyword)
+    for i, char in enumerate(ciphertext):
+        j = i % length
+        shift = ord(keyword[j]) - ord("A")
+        if not char.isalpha():
+            plaintext += char
+        elif ord("A") <= ord(char) <= ord("Z"):
+            plaintext += chr((ord(char) - ord("A") - shift + abc) % abc + ord("A"))
+        elif ord("a") <= ord(char) <= ord("z"):
+            plaintext += chr((ord(char) - ord("a") - shift + abc) % abc + ord("a"))
     return plaintext
