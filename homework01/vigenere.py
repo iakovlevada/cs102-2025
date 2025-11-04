@@ -15,17 +15,21 @@ def encrypt_vigenere(plaintext: str, keyword: str) -> str:
     """
     ciphertext = ""
     abc = ord("Z") - ord("A") + 1
+    lowercase_z = ord("z")
+    uppercase_z = ord("Z")
+    lowercase_a = ord("a")
+    uppercase_a = ord("A")
     keyword = keyword.upper()
     length = len(keyword)
     for i, char in enumerate(plaintext):
         j = i % length
-        shift = ord(keyword[j]) - ord("A")
+        shift = ord(keyword[j]) - uppercase_a
         if not char.isalpha():
             ciphertext += char
-        elif ord("A") <= ord(char) <= ord("Z"):
-            ciphertext += chr((ord(char) - ord("A") + shift) % abc + ord("A"))
-        elif ord("a") <= ord(char) <= ord("z"):
-            ciphertext += chr((ord(char) - ord("a") + shift) % abc + ord("a"))
+        elif uppercase_a <= ord(char) <= uppercase_z:
+            ciphertext += chr((ord(char) - uppercase_a + shift) % abc + uppercase_a)
+        elif lowercase_a <= ord(char) <= lowercase_z:
+            ciphertext += chr((ord(char) - lowercase_a + shift) % abc + lowercase_a)
     return ciphertext
 
 
@@ -41,15 +45,19 @@ def decrypt_vigenere(ciphertext: str, keyword: str) -> str:
     """
     plaintext = ""
     abc = ord("Z") - ord("A") + 1
+    lowercase_z = ord("z")
+    uppercase_z = ord("Z")
+    lowercase_a = ord("a")
+    uppercase_a = ord("A")
     keyword = keyword.upper()
     length = len(keyword)
     for i, char in enumerate(ciphertext):
         j = i % length
-        shift = ord(keyword[j]) - ord("A")
+        shift = ord(keyword[j]) - uppercase_a
         if not char.isalpha():
             plaintext += char
-        elif ord("A") <= ord(char) <= ord("Z"):
-            plaintext += chr((ord(char) - ord("A") - shift + abc) % abc + ord("A"))
-        elif ord("a") <= ord(char) <= ord("z"):
-            plaintext += chr((ord(char) - ord("a") - shift + abc) % abc + ord("a"))
+        elif uppercase_a <= ord(char) <= uppercase_z:
+            plaintext += chr((ord(char) - uppercase_a - shift + abc) % abc + uppercase_a)
+        elif lowercase_a <= ord(char) <= lowercase_z:
+            plaintext += chr((ord(char) - lowercase_a - shift + abc) % abc + lowercase_a)
     return plaintext
