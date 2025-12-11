@@ -43,17 +43,7 @@ def group(values: tp.List[T], n: int) -> tp.List[tp.List[T]]:
     >>> group([1,2,3,4,5,6,7,8,9], 3)
     [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
     """
-    m_v = []
-    m = []
-    len_values = len(values)
-    j = 0
-    while j < len_values:
-        for _ in range(n):
-            m.append(values[j])
-            j += 1
-        m_v.append(m)
-        m = []
-    return m_v
+    return [values[i : i + n] for i in range(0, len(values), n)]
 
 
 def get_row(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.List[str]:
@@ -81,10 +71,7 @@ def get_col(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.List[str
     ['3', '6', '9']
     """
     _, col = pos
-    col_v = []
-    for g in grid:
-        col_v.append(g[col])
-    return col_v
+    return [row[col] for row in grid]
 
 
 def get_block(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.List[str]:
@@ -99,35 +86,12 @@ def get_block(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.List[s
     ['2', '8', '.', '.', '.', '5', '.', '7', '9']
     """
     row, col = pos
-    row_v = []
-    if 0 <= row <= 2:
-        for i in range(3):
-            r = get_row(grid, (i, 0))
-            if 0 <= col <= 2:
-                row_v.append(r[:3])
-            elif 3 <= col <= 5:
-                row_v.append(r[3:6])
-            elif 6 <= col <= 8:
-                row_v.append(r[6:9])
-    elif 3 <= row <= 5:
-        for i in range(3, 6):
-            r = get_row(grid, (i, 0))
-            if 0 <= col <= 2:
-                row_v.append(r[:3])
-            elif 3 <= col <= 5:
-                row_v.append(r[3:6])
-            elif 6 <= col <= 8:
-                row_v.append(r[6:9])
-    elif 6 <= row <= 9:
-        for i in range(6, 9):
-            r = get_row(grid, (i, 0))
-            if 0 <= col <= 2:
-                row_v.append(r[:3])
-            elif 3 <= col <= 5:
-                row_v.append(r[3:6])
-            elif 6 <= col <= 8:
-                row_v.append(r[6:9])
-    block = sum(row_v, [])
+    block_row_start = (row // 3) * 3
+    block_col_start = (col // 3) * 3
+    block = []
+    for i in range(block_row_start, block_row_start + 3):
+        for j in range(block_col_start, block_col_start + 3):
+            block.append(grid[i][j])
     return block
 
 
@@ -159,14 +123,11 @@ def find_possible_values(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -
     >>> set(values) == {'2', '5', '9'}
     True
     """
-    values = set()
     row = get_row(grid, pos)
     col = get_col(grid, pos)
     block = get_block(grid, pos)
-    for i in range(1, 10):
-        if str(i) not in row and str(i) not in col and str(i) not in block:
-            values.add(str(i))
-    return values
+    values = set(row + col + block)
+    return {str(i) for i in range(1, 10)} - values
 
 
 def solve(grid: tp.List[tp.List[str]]) -> tp.Optional[tp.List[tp.List[str]]]:
@@ -276,27 +237,27 @@ def generate_sudoku(N: int) -> tp.List[tp.List[str]]:
     >>> check_solution(solution)
     True
     """
-    grid = [["."] * 9 for i in range(9)]
+    grid = [["."] * 9 for _ in range(9)]
+    for i in range(9):
+        for j in range(9):
+            possible_values = list(find_possible_values(grid, (i, j)))
+            random.shuffle(possible_values)
+            for value in possible_values:
+                grid[i][j] = value
+                temp_grid = deepcopy(grid)
+                if solve(temp_grid) is not None:
+                    break
+                grid[i][j] = "."
     N = min(N, 81)
-    n = 0
-    cells = [(i, j) for i in range(9) for j in range(9)]
-    random.shuffle(cells)
-    for i, j in cells:
-        if n >= N:
-            break
-        if grid[i][j] == ".":
-            els = list(find_possible_values(grid, (i, j)))
-            random.shuffle(els)
-            if els:
-                for e in els:
-                    grid[i][j] = e
-                    grid_2 = deepcopy(grid)
-                    result = solve(grid_2)
-                    if result is not None:
-                        n += 1
-                        break
-                    grid[i][j] = "."
-    return grid
+    if N == 81:
+        return grid
+    all_positions = [(i, j) for i in range(9) for j in range(9)]
+    random.shuffle(all_positions)
+    result = [["."] * 9 for _ in range(9)]
+    for idx in range(N):
+        i, j = all_positions[idx]
+        result[i][j] = grid[i][j]
+    return result
 
 
 if __name__ == "__main__":
