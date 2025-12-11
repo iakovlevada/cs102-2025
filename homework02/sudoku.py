@@ -199,11 +199,8 @@ def check_solution(solution: tp.List[tp.List[str]]) -> bool:
     """
     for r in range(9):
         row = get_row(solution, (r, 0))
-        if len(set(row)) != 9:
+        if len(set(row)) != 9 or "." in row:
             return False
-        for ro in row:
-            if ro == ".":
-                return False
     for c in range(9):
         col = get_col(solution, (0, c))
         if len(set(col)) != 9:
